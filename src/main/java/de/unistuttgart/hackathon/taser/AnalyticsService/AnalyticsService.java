@@ -1,8 +1,5 @@
 package de.unistuttgart.hackathon.taser.AnalyticsService;
 
-import org.apache.tomcat.jni.Local;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
 import redis.clients.jedis.JedisPooled;
@@ -13,7 +10,6 @@ import java.util.*;
 
 public class AnalyticsService {
 
-    private final Logger logger = LoggerFactory.getLogger(AnalyticsService.class);
     private final JedisPooled jedisPool = new JedisPooled("localhost", 6379);
     private final WebClient webClient = WebClient.create("http://localhost:8090");
 
@@ -35,7 +31,7 @@ public class AnalyticsService {
     /**
      * Calculates list of
      * @param queue to calculate the values for
-     * @return
+     * @return a List of floats
      */
     private List<Float> calculateValues(final Queue<Map<LocalDateTime, Boolean>> queue) {
         final List<Float> values = new ArrayList<>(Collections.nCopies(12, 0f));
@@ -45,9 +41,10 @@ public class AnalyticsService {
             long diff = now - voteTime;
             if (map.entrySet().iterator().next().getValue() && (diff <= 120 )){
                 int index = (int)diff/10;
-                values.set(1, values.get(1) + 1);
+                values.set(index, values.get(index) + 1);
             }
         }
+
         return values;
     }
 
