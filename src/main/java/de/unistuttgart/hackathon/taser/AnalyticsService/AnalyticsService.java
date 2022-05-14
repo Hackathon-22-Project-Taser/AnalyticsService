@@ -10,8 +10,8 @@ import java.util.*;
 
 public class AnalyticsService {
 
-    private final JedisPooled jedisPool = new JedisPooled("localhost", 6379);
-    private final WebClient webClient = WebClient.create("http://localhost:8090");
+    private final JedisPooled jedisPool = new JedisPooled("redis", 6379);
+    private final WebClient webClient = WebClient.create("http://queue:8080");
 
     /**
      * Calculates the Statistics for a specific room
