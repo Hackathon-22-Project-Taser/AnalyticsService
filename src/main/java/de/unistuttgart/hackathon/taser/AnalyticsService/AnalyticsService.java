@@ -43,6 +43,7 @@ public class AnalyticsService {
      */
     public List<Float> calculateValues(final Queue<Map<LocalDateTime, Boolean>> queue) {
         final List<Float> values = new ArrayList<>(Collections.nCopies(12, 0f));
+        int counter = 0;
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         for (final Map<LocalDateTime, Boolean> map : queue){
             long voteTime = map.entrySet().iterator().next().getKey().toEpochSecond(ZoneOffset.UTC);
@@ -51,9 +52,13 @@ public class AnalyticsService {
                 int index = (int)diff/10;
                 values.set(index, values.get(index) + 1);
             }
+            counter++;
         }
         logger.info(values.toString());
-        values.replaceAll(aFloat -> aFloat / queue.size());
+        if(counter > 0){
+            int finalCounter = counter;
+            values.replaceAll(aFloat -> aFloat / finalCounter);
+        }
         logger.info(values.toString());
         Collections.reverse(values);
         return values;
