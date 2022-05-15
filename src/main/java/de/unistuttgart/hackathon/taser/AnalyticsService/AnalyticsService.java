@@ -33,7 +33,7 @@ public class AnalyticsService {
      * @param queue to calculate the values for
      * @return a List of floats
      */
-    private List<Float> calculateValues(final Queue<Map<LocalDateTime, Boolean>> queue) {
+    public List<Float> calculateValues(final Queue<Map<LocalDateTime, Boolean>> queue) {
         final List<Float> values = new ArrayList<>(Collections.nCopies(12, 0f));
         long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         for (final Map<LocalDateTime, Boolean> map : queue){
@@ -44,7 +44,7 @@ public class AnalyticsService {
                 values.set(index, values.get(index) + 1);
             }
         }
-
+        Collections.reverse(values);
         return values;
     }
 
