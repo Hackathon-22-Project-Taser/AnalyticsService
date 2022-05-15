@@ -32,7 +32,7 @@ public class AnalyticsService {
             final String identifier = map.getKey();
             final Queue<Map<LocalDateTime, Boolean>> queue = map.getValue();
             final List<Float> values = calculateValues(queue);
-            jedisPool.sadd(identifier, values.toString());
+            jedisPool.set(identifier, values.toString());
         }
     }
 
