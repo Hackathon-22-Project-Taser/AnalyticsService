@@ -52,6 +52,9 @@ public class AnalyticsService {
                 values.set(index, values.get(index) + 1);
             }
         }
+        for (int i = 0; i < values.size(); i++){
+            values.set(i, values.get(i)/values.size());
+        }
         Collections.reverse(values);
         return values;
     }
