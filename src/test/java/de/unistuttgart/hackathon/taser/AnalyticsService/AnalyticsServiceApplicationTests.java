@@ -6,8 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AnalyticsServiceApplicationTests {
 
+	/**
+	 * Starts the Spring-boot application
+	 */
 	@Test
-	void contextLoads() {
-	}
-
+	void contextLoads() {}
 }
