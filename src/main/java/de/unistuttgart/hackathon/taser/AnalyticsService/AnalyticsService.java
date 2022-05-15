@@ -13,11 +13,11 @@ import java.util.*;
 
 public class AnalyticsService {
 
-    private final JedisPooled jedisPool = new JedisPooled("redis", 6379);
+    private final JedisPooled jedisPool = new JedisPooled("localhost", 6379);
     private final WebClient webClient;
     private final Logger logger = LoggerFactory.getLogger(AnalyticsService.class);
     public AnalyticsService(){
-        String hostname = "http://queue:8080";
+        String hostname = "http://localhost:8084";
         webClient = WebClient.create(hostname);
     }
 
