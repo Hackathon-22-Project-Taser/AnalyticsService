@@ -3,13 +3,10 @@ package de.unistuttgart.hackathon.taser.AnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
-import reactor.core.publisher.Mono;
 import redis.clients.jedis.JedisPooled;
 
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -67,7 +64,7 @@ public class AnalyticsService {
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Queue<Map<LocalDateTime, Boolean>>>>() {})
                     .block();
         }catch (WebClientRequestException e){
-            logger.error("cant connect to queueService: " + e);
+            logger.error("cant connect to queueService to update user data: " + e);
         }
         return new HashMap<>();
     }
