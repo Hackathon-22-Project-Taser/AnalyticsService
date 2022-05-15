@@ -1,9 +1,15 @@
 package de.unistuttgart.hackathon.taser.AnalyticsService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.core.publisher.Mono;
 import redis.clients.jedis.JedisPooled;
 
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -11,16 +17,21 @@ import java.util.*;
 public class AnalyticsService {
 
     private final JedisPooled jedisPool = new JedisPooled("redis", 6379);
-    private final WebClient webClient = WebClient.create("http://queue:8080");
+    private final WebClient webClient;
+    private final Logger logger = LoggerFactory.getLogger(AnalyticsService.class);
+    public AnalyticsService(){
+        String hostname = "http://queue:8080";
+        webClient = WebClient.create(hostname);
+    }
 
     /**
      * Calculates the Statistics for a specific room
      *
      * Implemented as a cronjob
      */
-    public void calculateStatistics(){
+    public void calculateStatistics() {
         final Map<String, Queue<Map<LocalDateTime, Boolean>>> queues = getQueueData();
-        for (final Map.Entry<String, Queue<Map<LocalDateTime, Boolean>>> map : queues.entrySet() ){
+        for (final Map.Entry<String, Queue<Map<LocalDateTime, Boolean>>> map : queues.entrySet()) {
             final String identifier = map.getKey();
             final Queue<Map<LocalDateTime, Boolean>> queue = map.getValue();
             final List<Float> values = calculateValues(queue);
@@ -48,7 +59,16 @@ public class AnalyticsService {
         return values;
     }
 
-    private Map<String, Queue<Map<LocalDateTime, Boolean>>> getQueueData() {
-        return webClient.get().uri("/queue/getQueues").retrieve().bodyToMono(new ParameterizedTypeReference<Map<String, Queue<Map<LocalDateTime, Boolean>>>>() {}).block();
+    private Map<String, Queue<Map<LocalDateTime, Boolean>>> getQueueData(){
+        try{
+            return webClient.get()
+                    .uri("/queue/getQueues")
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Queue<Map<LocalDateTime, Boolean>>>>() {})
+                    .block();
+        }catch (WebClientRequestException e){
+            logger.error("cant connect to queueService: " + e);
+        }
+        return new HashMap<>();
     }
 }
